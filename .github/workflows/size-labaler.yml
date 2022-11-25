@@ -1,0 +1,19 @@
+name: Size Labeler
+
+on:
+  pull_request:
+    branches-ignore:
+      - master
+      - gh-pages
+      - release
+
+jobs:
+  size-labeler:
+    name: Size Labeler
+    runs-on: [base-default]
+
+    steps:
+      - name: Assign size label
+        uses: pascalgn/size-label-action@v0.1.1
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

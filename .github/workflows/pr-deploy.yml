@@ -1,0 +1,96 @@
+name: PR Deploy (GitHub Pages)
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  deploy:
+    runs-on: base-default
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: chessboard
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16.13.0
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v1.6.4
+        with:
+          private-key: ${{ secrets.CHESSCOM_ACTIONS_TEMPORARY_BOT_KEY }}
+
+      - name: Setup GitHub Packages
+        env:
+          TOKEN: ${{ secrets.CHESSCOM_ACTIONS_PAT }}
+        run: |
+          cd chessboard
+          npm run setup --pat=$TOKEN
+
+      - name: Install Dependencies
+        run: |
+          cd chessboard
+          npm ci
+
+      - name: Check for Deploy label
+        id: labelCheck
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd chessboard
+          node build/actions/pr-deploy.js --check
+
+      - uses: actions/checkout@v2
+        if: ${{ steps.labelCheck.outputs.hasDeployLabel == 'true' }}
+        with:
+          path: gh-pages
+          ref: gh-pages
+
+      - name: Setup git user
+        if: ${{ steps.labelCheck.outputs.hasDeployLabel == 'true' }}
+        run: |
+          cd gh-pages
+
+          git config 'user.name' 'GitHub Actions'
+          git config 'user.email' 'actions@github.com'
+
+      - name: Build deploy
+        if: ${{ steps.labelCheck.outputs.hasDeployLabel == 'true' }}
+        env:
+          VITE_PUBLIC_PATH: /chessboard/pr/${{ steps.labelCheck.outputs.prNumber }}/
+        run: |
+          cd chessboard
+          npm run build:simulator
+
+      - name: Publish to gh-pages branch
+        if: ${{ steps.labelCheck.outputs.hasDeployLabel == 'true' }}
+        run: |
+          DEPLOY_PATH=gh-pages/pr/${{ steps.labelCheck.outputs.prNumber }}
+
+          rm -rf $DEPLOY_PATH
+          mkdir -p gh-pages/pr
+          cp -R chessboard/dist/simulator $DEPLOY_PATH
+
+          cd gh-pages
+
+          git add -A
+          git commit -m 'Deploy #${{ steps.labelCheck.outputs.prNumber }} (${{ github.sha }})'
+
+          git push origin gh-pages
+
+      - name: Notify Deployment
+        if: ${{ steps.labelCheck.outputs.hasDeployLabel == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd chessboard
+          node build/actions/pr-deploy.js --notify

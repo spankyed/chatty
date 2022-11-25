@@ -1,0 +1,36 @@
+name: PR Deploy Cleanup (GitHub Pages)
+
+on:
+  schedule:
+    - cron: "0 3 1,15 * *"
+
+jobs:
+  cleanup:
+    runs-on: base-default
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v1.6.4
+        with:
+          private-key: ${{ secrets.CHESSCOM_ACTIONS_TEMPORARY_BOT_KEY }}
+
+      - name: Setup git user
+        run: |
+          git config 'user.name' 'GitHub Actions'
+          git config 'user.email' 'actions@github.com'
+
+      - name: Clean up existing deploy
+        run: |
+          rm -rf pr
+          mkdir -p pr
+
+          touch pr/.gitkeep
+
+          git add -A
+          git diff-index --quiet HEAD || git commit -m 'Scheduled Deploy Cleanup (${{ github.run_id }})'
+
+          git push origin gh-pages

@@ -1,0 +1,15 @@
+name: 'File Glob Chunker'
+description: 'Gets a list of files from given glob and divides listings into a given amount of chunks. Files are comma-delimited.'
+inputs:
+  chunks:
+    description: 'Number of chunks to create for dividing the file listings (default: `2`)'
+    default: 1
+  patterns:
+    description: 'List of `@actions/glob` patterns of files to select. (default: `**`)'
+    default: '**'
+  shuffle:
+    description: 'Denote if file listings should be shuffled before dividing into chunks (default: `false`)'
+    default: false
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

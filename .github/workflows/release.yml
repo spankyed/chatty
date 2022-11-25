@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  post_release:
+    name: Post Release Hook
+    runs-on: base-default
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: release
+          fetch-depth: 0
+          token: ${{ secrets.NETLIFY_TOKEN }}
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.13.1
+
+      - name: Get Package Version
+        id: package
+        run: node build/release/post-release-action.js --version
+
+      - name: Commit Changes & Push
+        id: git
+        run: |
+          BRANCH="gh-actions/release-${{ steps.package.outputs.version }}-${{ github.run_id }}"
+          RELEASE_SHA="$(git rev-parse HEAD)"
+
+          echo "::set-output name=branch_name::$BRANCH"
+
+          git config 'user.name' 'ChessComGithubActionsBot'
+          git config 'user.email' 'ChessComGithubActionsBot@users.noreply.github.com'
+
+          git fetch origin
+          git checkout develop
+
+          git checkout -b $BRANCH
+          git cherry-pick $RELEASE_SHA
+
+          git push origin $BRANCH
+
+      - name: Create Pull Request
+        id: pr
+        run: |
+          echo '{
+            "title": "Merge release changes into develop (${{ steps.package.outputs.version }})",
+            "body": "This is an automated PR to merge `release` changes into `develop` after a new release has been made. See [docs](https://github.com/ChessCom/chessboard/blob/develop/README.md#making-a-release) for more details.",
+            "head": "${{ steps.git.outputs.branch_name }}",
+            "base": "develop"
+          }' > .payload.json
+
+          curl --request POST \
+            --header 'authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}' \
+            --header 'content-type: application/vnd.github.v3+json' \
+            --data-binary @.payload.json \
+            -v \
+            -o .data.json \
+            https://api.github.com/repos/${{ github.repository }}/pulls
+
+          PR_URL=$(node -e "process.stdout.write(require('./.data.json').html_url);")
+
+          echo "::set-output name=url::$PR_URL"
+
+      - name: Notify Slack channels
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          PR_URL: ${{ steps.pr.outputs.url }}
+        run: |
+          node build/release/post-release-action.js --slack

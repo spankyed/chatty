@@ -1,0 +1,21 @@
+{
+  "name": "file-glob-chunker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "ncc build index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/glob": "^0.1.0",
+    "lodash.chunk": "^4.2.0",
+    "lodash.shuffle": "^4.2.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.21.1"
+  }
+}

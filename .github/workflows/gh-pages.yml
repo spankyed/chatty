@@ -1,0 +1,50 @@
+name: GitHub Pages Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: base-default
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16.13.0
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v1.6.4
+        with:
+          private-key: ${{ secrets.CHESSCOM_ACTIONS_TEMPORARY_BOT_KEY }}
+
+      - name: Setup GitHub Packages
+        env:
+          TOKEN: ${{ secrets.CHESSCOM_ACTIONS_PAT }}
+        run: npm run setup --pat=$TOKEN
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build simulator
+        run: npm run build:simulator
+
+      - name: Publish to gh-pages branch
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2.3.0
+        with:
+          target_branch: gh-pages
+          build_dir: dist/simulator
+          keep_history: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
