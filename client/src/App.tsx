@@ -1,17 +1,20 @@
+import React from 'react';
 import { useState } from 'react'
-// import { useForm } from "react-hook-form";
-// import reactLogo from './assets/react.svg'
-// import { Layout, Menu, Breadcrumb } from 'antd';
 import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu } from 'antd';
-
 import './App.css'
-import React from 'react';
+import { RecoilRoot } from 'recoil';
+
+// import { useForm } from "react-hook-form";
+// import reactLogo from './assets/react.svg'
+
+// type AppProps = { message: string }; /* could also use interface */
+
+// const App = ({ message }: AppProps) => <div>{message}</div>;
+
 
 const { Header, Footer, Sider, Content } = Layout;
-
-
 
 const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
   key,
@@ -42,7 +45,9 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <AppLayout/>
+    <RecoilRoot>
+      <AppLayout/>
+    </RecoilRoot>
   )
 }
 
