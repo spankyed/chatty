@@ -1,66 +1,71 @@
 import React from 'react';
 import { useState } from 'react'
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import { LaptopOutlined, NotificationOutlined, PlusSquareOutlined, UserOutlined } from '@ant-design/icons';
+import { MenuProps } from 'antd';
 import { Breadcrumb, Layout as Section, Menu } from 'antd';
 import './App.css'
 import { RecoilRoot } from 'recoil';
 import Navigation from './Navigation';
-// import { ReduceStress } from "react-reduce-stress";
-
-// import { useForm } from "react-hook-form";
-// import reactLogo from './assets/react.svg'
+import { Outlet, useLocation } from 'react-router-dom';
+import SideMenu from './SideMenu';
+import { routes } from './routes';
 
 // type AppProps = { message: string }; /* could also use interface */
 
 // const App = ({ message }: AppProps) => <div>{message}</div>;
 
-
 const { Sider, Content } = Section;
 
-const items2: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-  (icon, index) => {
-    const key = String(index + 1);
 
-    return {
-      key: `sub${key}`,
-      icon: React.createElement(icon),
-      label: `subnav ${key}`,
+function Crumby() {
+  const location = useLocation();
+  const currentRoute = routes.find((route) => route.path === location.pathname);
+  const breadcrumbItems = [];
 
-      children: new Array(4).fill(null).map((_, j) => {
-        const subKey = index * 4 + j + 1;
-        return {
-          key: subKey,
-          label: `option${subKey}`,
-        };
-      }),
-    };
-  },
-);
-
-function Layout() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <RecoilRoot>
-      <AppLayout/>
-    </RecoilRoot>
-  )
+  if (currentRoute) {
+    breadcrumbItems.push(
+      <Breadcrumb.Item key={currentRoute.name}>
+        {currentRoute.name}
+      </Breadcrumb.Item>
+    );
+  }
 }
 
-function AppLayout() {
+export default function AppLayout() {
+  const [count, setCount] = useState(0)
+  // const crumbs = useMatch('/system') ? 'System' : useMatch('/dialogue') ? 'Dialogue' : useMatch('/account') ? 'Account' : 'System';
+  const location = useLocation();
+  const currentRoute = routes.find((route) => `/${route.name}` === location.pathname);
+  const crumbItems = [];
+
+  if (currentRoute) {
+    crumbItems.push(
+      <Breadcrumb.Item key={currentRoute.name}>
+        {currentRoute.name}
+      </Breadcrumb.Item>
+    );
+  }
   return (
     <>
       <Section  className="h-full">
         <Navigation/>
         <Section>
+
           <SideMenu/>
+
           <Section style={{ padding: '0 24px 24px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
+            <Breadcrumb style={{ margin: '16px 0' }} className="capitalize">
+              {crumbItems}
+              {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
               <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
+              <Breadcrumb.Item>App</Breadcrumb.Item> */}
             </Breadcrumb>
+            {/* <div className="flex">
+              <div className="flex-1">
+                <PlusSquareOutlined  style={{ fontSize: '36px', color: '#08c' }}/>
+              </div>
+            </div> */}
+
             <Content
               className="site-layout-background text-black"
               style={{
@@ -69,7 +74,7 @@ function AppLayout() {
                 minHeight: 280,
               }}
             >
-              Content
+              <Outlet />
             </Content>
           </Section>
         </Section>
@@ -77,21 +82,3 @@ function AppLayout() {
     </>
   );
 }
-
-
-function SideMenu() {
-  return (
-    <Sider width={200} className="site-layout-background">
-      <Menu
-        mode="inline"
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
-        style={{ height: '100%', borderRight: 0 }}
-        items={items2}
-      />
-    </Sider>
-  );
-}
-
-
-export default Layout
