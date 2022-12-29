@@ -1,12 +1,8 @@
 import React from 'react';
 import { useState } from 'react'
-import { LaptopOutlined, NotificationOutlined, PlusSquareOutlined, UserOutlined } from '@ant-design/icons';
 import { MenuProps } from 'antd';
-import { Breadcrumb, Layout as Section, Menu } from 'antd';
+import { Layout as Section, Menu } from 'antd';
 import './App.css'
-import { RecoilRoot } from 'recoil';
-import Navigation from './Navigation';
-import { Outlet } from 'react-router-dom';
 import { routes } from './routes';
 
 const { Sider } = Section;

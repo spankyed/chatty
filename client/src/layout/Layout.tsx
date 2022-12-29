@@ -16,35 +16,26 @@ import { routes } from './routes';
 
 const { Sider, Content } = Section;
 
-
-function Crumby() {
-  const location = useLocation();
-  const currentRoute = routes.find((route) => route.path === location.pathname);
-  const breadcrumbItems = [];
-
-  if (currentRoute) {
-    breadcrumbItems.push(
-      <Breadcrumb.Item key={currentRoute.name}>
-        {currentRoute.name}
-      </Breadcrumb.Item>
-    );
-  }
-}
-
 export default function AppLayout() {
   const [count, setCount] = useState(0)
   // const crumbs = useMatch('/system') ? 'System' : useMatch('/dialogue') ? 'Dialogue' : useMatch('/account') ? 'Account' : 'System';
   const location = useLocation();
-  const currentRoute = routes.find((route) => `/${route.name}` === location.pathname);
-  const crumbItems = [];
-
-  if (currentRoute) {
-    crumbItems.push(
-      <Breadcrumb.Item key={currentRoute.name}>
-        {currentRoute.name}
+  // const currentRoute = routes.find((route) => `/${route.name}` === location.pathname);
+  const crumbItems = location.pathname.split('/').filter(crumb => crumb).map(crumb => {
+    return (
+      <Breadcrumb.Item key={crumb}>
+        {crumb}
       </Breadcrumb.Item>
-    );
-  }
+      );
+  });
+
+  // if (currentRoute) {
+  //   crumbItems.push(
+  //     <Breadcrumb.Item key={currentRoute.name}>
+  //       {currentRoute.name}
+  //     </Breadcrumb.Item>
+  //   );
+  // }
   return (
     <>
       <Section  className="h-full">
@@ -53,7 +44,12 @@ export default function AppLayout() {
 
           <SideMenu/>
 
-          <Section style={{ padding: '0 24px 24px' }}>
+          <Section 
+            style={{
+              padding: '0 24px 24px', 
+              position: 'relative',
+            }}
+          >
             <Breadcrumb style={{ margin: '16px 0' }} className="capitalize">
               {crumbItems}
               {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -69,7 +65,7 @@ export default function AppLayout() {
             <Content
               className="site-layout-background text-black"
               style={{
-                padding: 24,
+                padding: '0 24px',
                 margin: 0,
                 minHeight: 280,
               }}
