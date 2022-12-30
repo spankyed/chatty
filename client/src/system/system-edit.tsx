@@ -1,45 +1,82 @@
 import React from 'react';
-import { Form, Input, Select } from 'antd';
+import { Button, Dropdown, Form, Input, MenuProps, Select } from 'antd';
+
+const onMenuClick: MenuProps['onClick'] = e => {
+  console.log('click', e);
+};
+
+const items = [
+  {
+    key: '1',
+    label: 'Import Dataset',
+  },
+  {
+    key: '2',
+    label: 'Generate with AI',
+  },
+];
+
+const layout = {
+  labelCol: { span: 3 },
+  wrapperCol: { span: 16 },
+};
+
+const tailLayout = {
+  wrapperCol: { offset: 3, span: 16 },
+};
 
 function SystemEdit() {
 
   const { Option } = Select;
 
   return (
-    <Form>
-      
-      {/* <div className="flex flex-nowrap">
-        <Input addonBefore="Module Title: " className="flex-grow" placeholder="Natural Language Processor" />
-        <Button type="primary" icon={<SaveOutlined />} size='large' />
-      </div> */}
-
-      <Form.Item label="Description">
-        <Input.TextArea />
+    <Form {...layout} >
+      <Form.Item label="Title">
+        <Input placeholder="Natural Language Processor" />
+      </Form.Item>
+      <Form.Item label="Prompt">
+        <Input.TextArea style={{  resize: 'none', height: '7rem' }} />
+      </Form.Item>
+      <Form.Item label="Inputs (Responses)">
+        <Select mode="multiple">
+          <Option value="module1">Module 1</Option>
+          <Option value="module2">Module 2</Option>
+          <Option value="module3">Module 3</Option>
+        </Select>
       </Form.Item>
       <Form.Item label="Template">
-        <Input.TextArea />
+        <Input.TextArea style={{  resize: 'none', height: '15rem' }}/>
       </Form.Item>
-      <Form.Item label="Inputs">
-        <Select mode="multiple">
-          <Option value="input1">Input 1</Option>
-          <Option value="input2">Input 2</Option>
-          <Option value="input3">Input 3</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item label="Output">
+
+      <Form.Item label="Go To">
         <Select>
-          <Option value="output1">Output 1</Option>
-          <Option value="output2">Output 2</Option>
-          <Option value="output3">Output 3</Option>
+          <Option value="module1">Module 1</Option>
+          <Option value="module2">Module 2</Option>
+          <Option value="module3">Module 3</Option>
         </Select>
       </Form.Item>
-      <Form.Item>
+      {/* <Form.Item>
+        <Button type="primary" icon={<SaveOutlined />} size='large' />
+        <SaveOutlined />
         <button
           className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
           type="submit"
         >
           Save
         </button>
+      </Form.Item> */}
+      <Form.Item {...tailLayout}>
+        <Button type="primary" htmlType="submit">
+          Done
+        </Button>
+        {/* <Button htmlType="button" onClick={()=>{}}>
+          Fine-Tune
+        </Button> */}
+        <Dropdown.Button menu={{ items, onClick: onMenuClick }} className="inline">Fine-Tune</Dropdown.Button>
+
+        <Button type="link" htmlType="button" onClick={()=>{}}>
+          Preview & Tune
+        </Button>
       </Form.Item>
     </Form>
   );
