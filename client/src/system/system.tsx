@@ -1,11 +1,10 @@
-import { useNavigate, Form as RouterForm, redirect, ActionFunctionArgs } from "react-router-dom";
+import { useNavigate, Form as RouterForm, redirect, ActionFunctionArgs, LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 // import { Link } from '@types/react-router-dom';
 import React from 'react';
 import { Button, Card, Input, Space, Typography, Form  } from 'antd';
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { createNote } from "../api/mock-api";
+import { createModule, getModules, Module } from "../api/mock-api";
 // import { useForm } from "react-hook-form";
-// import { createNote } from "../notes";
 
 const { Meta } = Card;
 const { Text } = Typography;
@@ -32,20 +31,31 @@ const { Text } = Typography;
 //   </div>
 // );
 
+export async function loader(args: LoaderFunctionArgs) {
+  console.log('args: ', args);
+  const modules = await getModules();
+  console.log('modules: ', modules);
+  if (!modules) throw new Response("", { status: 404 });
+  return modules;
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   console.log('request: ', request);
   const formData = await request.formData();
-  const note = await createNote({
+  const module = await createModule({
     id: '',
     title: '',
     // title: formData.get<("title"),
     content: '',
     // content: formData.get("content"),
-  });
-  return redirect(`/system/${note.id}`);
+  }); // todo have some default values
+  return redirect(`/system/${module.id}`);
 }
 
 function System() {
+  const modules = useLoaderData() as Module[];
+  console.log('modules: ', modules);
+
   return (
     <>
     <div className="flex flex-col w-full h-full justify-start">
@@ -77,11 +87,16 @@ function System() {
       <div className="w-full flex-grow flex flex-row flex-wrap mb-6 justify-start">
 
         {
-          (new Array(9)).fill(null).map((item, index) => {
+          modules.map((module, index) => {
             return (
-              <Module key={index} />
+              <SystemModule key={index} module={module}/>
             )
           })
+          // (new Array(9)).fill(null).map((item, index) => {
+          //   return (
+          //     <SystemModule key={index} />
+          //   )
+          // })
 
         }
       </div>
@@ -91,12 +106,13 @@ function System() {
   );
 }
 
-function Module() {
+function SystemModule({module}: {module: Module}) {
+  console.log('module: ', module);
   let navigate = useNavigate();
   return (
     <Card 
       className="m-2 p-2"
-      title="Title" style={{ width: 300 }}  
+      title={module.title} style={{ width: 300 }}  
       extra={<Text style={{ fontSize: 36 }}>123</Text>}>
       <div style={{ marginTop: 16 }}>
         <Text style={{ marginBottom: 16 }}>How could I use word embeddings and semantic search for short/long term memory for a chatbot?</Text>

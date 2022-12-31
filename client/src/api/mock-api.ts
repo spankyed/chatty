@@ -1,58 +1,80 @@
 import localforage from "localforage";
 
-type Note = {
-    id: string;
-    title: string;
-    content: string;
+// localforage.clear();
+
+export type Module = {
+  id: string;
+  title: string;
+  content?: string;
 }
 
-export async function getNotes(): Promise<Note[]> {
-  let notes = await localforage.getItem<Note[]>("notes");
-  if (!notes) notes = [];
-  return notes;
+export type PageModel = {
+  modules: Module[];
+  module: Module;
 }
 
-export async function createNote({ title, content }: Note) {
+function set(modules: Module[]) {
+  return localforage.setItem("modules", modules);
+}
+
+async function get(): Promise<Module[]> {
+  let modules = await localforage.getItem<Module[]>("modules");
+  if (!modules) modules = [];
+  return modules;
+}
+
+
+export async function loadEditModule(id: string): Promise<PageModel | false> { // todo type
+  let modules = await get();
+  let module = modules.find((module) => module.id === id)
+  if (!modules.length || !module) return false; // iffy
+  // todo retrieve models for model-dropdown as well
+  return { modules, module };
+}
+
+export async function getModules(): Promise<Module[]> {
+  return await get();
+}
+
+export async function getModule(id: string) {
+  let modules = await get();
+  if (!modules.length) return false;
+  let module = modules.find((module) => module.id === id);
+  return module ?? null;
+}
+
+export async function createModule({ title, content }: Module) {
   let id = Math.random().toString(36).substring(2, 9);
-  let note = { id, title, content };
-  // let note = { id, title: '', content: '' };
-  let notes = await getNotes();
-  notes.unshift(note);
-  await set(notes);
-  return note;
+  let module = { id, title, content };
+  // let module = { id, title: '', content: '' };
+  let modules = await getModules();
+  modules.unshift(module);
+  await set(modules);
+  return module;
 }
 
-export async function getNote(id: string) {
-  let notes = await localforage.getItem<Note[]>("notes");
-  if (!notes) return false;
-  let note = notes.find((note) => note.id === id);
-  return note ?? null;
-}
-
-export async function deleteNote(id: string) {
-  let notes = await localforage.getItem<Note[]>("notes");
-  if (!notes) return false;
-  let index = notes?.findIndex((note) => note.id === id);
+export async function updateModule(id: string, module: Module) {
+  let modules = await get();
+  if (!modules.length) return false;
+  let index = modules?.findIndex((module) => module.id === id);
   if (index > -1) {
-    notes.splice(index, 1);
-    await set(notes);
+    modules[index] = module;                                                                                                                             
+    await set(modules);
     return true;
   }
   return false;
 }
 
-export async function updateNote(id: string, note: Note) {
-  let notes = await localforage.getItem<Note[]>("notes");
-  if (!notes) return false;
-  let index = notes?.findIndex((note) => note.id === id);
+export async function deleteModule(id: string) {
+  let modules = await get();
+  if (!modules.length) return false;
+  let index = modules?.findIndex((module) => module.id === id);
   if (index > -1) {
-    notes[index] = note;                                                                                                                             
-    await set(notes);
+    modules.splice(index, 1);
+    await set(modules);
     return true;
   }
   return false;
 }
 
-function set(notes: Note[]) {
-  return localforage.setItem("notes", notes);
-}
+

@@ -1,13 +1,14 @@
-import System, { action as newModule} from "../system/system";
+import System, { action as newModule, loader as systemLoader} from "../system/system";
 import Layout from "./Layout";
 import { LaptopOutlined, NotificationOutlined, PlusSquareOutlined, UserOutlined } from '@ant-design/icons';
-import SystemEdit, { loader as moduleLoader } from "../system/edit/system-edit";
+import SystemEdit, { action as moduleAction, loader as moduleLoader } from "../system/edit/system-edit";
 
 const routes = [
   {
     name: 'system',
     element: <System/>,
     icon: UserOutlined,
+    loader: systemLoader,
     action: newModule,
   },
   {
@@ -28,7 +29,7 @@ const dynamicRoutes = [
     dynamic: true,
     element: <SystemEdit/>,
     loader: moduleLoader,
-    // action: noteAction,
+    action: moduleAction,
     // errorElement: <h2>Note not found</h2>,
   } 
 ]
@@ -44,6 +45,7 @@ const router = [
         element: route.element,
         // ...(route.children && { children: route.children }),
         ...(route.action && { action: route.action }),
+        ...(route.loader && { loader: route.loader }),
       })),
       ...dynamicRoutes
     ],
