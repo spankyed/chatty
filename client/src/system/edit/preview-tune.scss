@@ -1,0 +1,36 @@
+/* .previewTune:has(> .slide-pane__content) {
+  padding: 0px;
+} */
+.slide-pane__content {
+  padding: 0px;
+}
+
+.slide-pane__close svg {
+  width: 20px;
+  padding: 0;
+  height: 40px;
+}
+
+.parameterSlider:hover {
+  .ant-slider-track {
+    z-index: 1;
+    background-color: #298951;
+  }
+}
+.parameterSlider {
+
+  .ant-slider-handle {
+    z-index: 10;
+    background-color: #298951;
+    &::after{
+      background-color: #298951;
+    }
+  }
+  .ant-slider-step {
+    background-color: #545454;
+  }
+  .ant-slider-track {
+    z-index: 1;
+    background-color: #298951;
+  }
+}

@@ -9,6 +9,7 @@ import Navigation from './Navigation';
 import { Outlet, useLocation } from 'react-router-dom';
 import SideMenu from './SideMenu';
 import { routes } from './routes';
+import "react-sliding-pane/dist/react-sliding-pane.css";
 
 // type AppProps = { message: string }; /* could also use interface */
 

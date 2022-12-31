@@ -1,7 +1,7 @@
 import System, { action as newModule} from "../system/system";
 import Layout from "./Layout";
 import { LaptopOutlined, NotificationOutlined, PlusSquareOutlined, UserOutlined } from '@ant-design/icons';
-import SystemEdit from "../system/system-edit";
+import SystemEdit, { loader as moduleLoader } from "../system/edit/system-edit";
 
 const routes = [
   {
@@ -27,7 +27,7 @@ const dynamicRoutes = [
     path: 'system/:moduleId',
     dynamic: true,
     element: <SystemEdit/>,
-    // loader: noteLoader,
+    loader: moduleLoader,
     // action: noteAction,
     // errorElement: <h2>Note not found</h2>,
   } 

@@ -28,13 +28,11 @@ process.on('unhandledRejection', async (err) => {
   process.exit(1)
 })
 
-start()
-  .then((server) => {
-    console.log(`
-🚀 Server ready at: ${server.info.uri}
-⭐️ See sample requests: http://pris.ly/e/ts/rest-hapi#3-using-the-rest-api
-`)
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+start().then((server) => {
+  console.log(`
+  🚀 Server ready at: ${server.info.uri}
+  ⭐️ See sample requests: http://pris.ly/e/ts/rest-hapi#3-using-the-rest-api
+  `)
+}).catch((err) => {
+  console.log(err)
+})

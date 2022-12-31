@@ -41,6 +41,18 @@ export async function deleteNote(id: string) {
   return false;
 }
 
+export async function updateNote(id: string, note: Note) {
+  let notes = await localforage.getItem<Note[]>("notes");
+  if (!notes) return false;
+  let index = notes?.findIndex((note) => note.id === id);
+  if (index > -1) {
+    notes[index] = note;                                                                                                                             
+    await set(notes);
+    return true;
+  }
+  return false;
+}
+
 function set(notes: Note[]) {
   return localforage.setItem("notes", notes);
 }
