@@ -3,10 +3,10 @@ import { Button, Dropdown, Form, Input, MenuProps, Radio, Select, Slider } from 
 import SlidingPane from "react-sliding-pane";
 import { CloseCircleOutlined } from '@ant-design/icons';
 import PreviewTune from './preview-tune';
-import { loadEditModule, Module, PageModel, updateModule } from '../../api/mock-api';
+import { loadEditModule, Module, PageModel, updateModule } from './api';
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect, useFormAction, useLoaderData, useSubmit } from 'react-router-dom';
 
-export default SystemEdit;
+export default ModuleEdit;
 
 const onMenuClick: MenuProps['onClick'] = e => {
   console.log('click', e);
@@ -43,7 +43,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   console.log('request: ', request);
   const formData = await request.formData();
-  const moduleData = Object.fromEntries(formData) as Module;
+  const moduleData = Object.fromEntries(formData) as unknown as Module;
   console.log('data: ', {moduleData, formData: [...formData]});
   const module = await updateModule(moduleData.id, {
     id: moduleData.id,
@@ -54,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return redirect(`/system`);
 }
 
-function SystemEdit() {
+function ModuleEdit() {
   // const methods = useForm({
   //   defaultValues: {
   //     firstName: '',

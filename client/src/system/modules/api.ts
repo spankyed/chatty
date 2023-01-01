@@ -5,7 +5,8 @@ import localforage from "localforage";
 export type Module = {
   id: string;
   title: string;
-  content?: string;
+  prompt?: string;
+  isNew?: boolean;
 }
 
 export type PageModel = {
@@ -43,12 +44,13 @@ export async function getModule(id: string) {
   return module ?? null;
 }
 
-export async function createModule({ title, content }: Module) {
+export async function createModule({ title, prompt }: Module) {
   let id = Math.random().toString(36).substring(2, 9);
-  let module = { id, title, content };
+  let module = { id, title, prompt };
   // let module = { id, title: '', content: '' };
   let modules = await getModules();
-  modules.unshift(module);
+  // modules.unshift(module);
+  modules.push(module);
   await set(modules);
   return module;
 }

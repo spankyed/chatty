@@ -3,11 +3,11 @@ import { useState } from 'react'
 import { LaptopOutlined, NotificationOutlined, PlusSquareOutlined, UserOutlined } from '@ant-design/icons';
 import { MenuProps } from 'antd';
 import { Breadcrumb, Layout as Section, Menu } from 'antd';
-import './App.css'
+import './layout.css'
 import { RecoilRoot } from 'recoil';
-import Navigation from './Navigation';
+import Navigation from './header';
 import { Outlet, useLocation } from 'react-router-dom';
-import SideMenu from './SideMenu';
+import SideMenu from './side-menu';
 import { routes } from './routes';
 import "react-sliding-pane/dist/react-sliding-pane.css";
 

@@ -1,9 +1,9 @@
-import { useNavigate, Form as RouterForm, redirect, ActionFunctionArgs, LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import { useNavigate, Form as RouterForm, redirect, ActionFunctionArgs, LoaderFunctionArgs, useLoaderData, Link } from "react-router-dom";
 // import { Link } from '@types/react-router-dom';
 import React from 'react';
 import { Button, Card, Input, Space, Typography, Form  } from 'antd';
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { createModule, getModules, Module } from "../api/mock-api";
+import { createModule, getModules, Module } from "./api";
 // import { useForm } from "react-hook-form";
 
 const { Meta } = Card;
@@ -44,15 +44,16 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const module = await createModule({
     id: '',
-    title: '',
+    title: 'default title',
     // title: formData.get<("title"),
-    content: '',
+    prompt: '',
+    isNew: true,
     // content: formData.get("content"),
   }); // todo have some default values
   return redirect(`/system/${module.id}`);
 }
 
-function System() {
+function Modules() {
   const modules = useLoaderData() as Module[];
   console.log('modules: ', modules);
 
@@ -89,12 +90,12 @@ function System() {
         {
           modules.map((module, index) => {
             return (
-              <SystemModule key={index} module={module}/>
+              <ModuleItem key={index} module={module} index={index}/>
             )
           })
           // (new Array(9)).fill(null).map((item, index) => {
           //   return (
-          //     <SystemModule key={index} />
+          //     <ModuleItem key={index} />
           //   )
           // })
 
@@ -106,28 +107,30 @@ function System() {
   );
 }
 
-function SystemModule({module}: {module: Module}) {
-  console.log('module: ', module);
+function ModuleItem({ module, index }: { module: Module, index: number }) {
+  // console.log('module: ', module);
   let navigate = useNavigate();
   return (
-    <Card 
-      className="m-2 p-2"
-      title={module.title} style={{ width: 300 }}  
-      extra={<Text style={{ fontSize: 36 }}>123</Text>}>
-      <div style={{ marginTop: 16 }}>
-        <Text style={{ marginBottom: 16 }}>How could I use word embeddings and semantic search for short/long term memory for a chatbot?</Text>
-        {/* <Form>
-          <Form.Item label="Condition">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Go to">
-            <Input />
-          </Form.Item>
-        </Form> */}
-      </div>
-    </Card>
+    <Link to={`/system/modules/${module.id}`} style={{ textTransform: 'capitalize' }}>
+      <Card 
+        className="m-2 p-2"
+        title={module.title} style={{ width: 300 }}  
+        extra={<Text style={{ fontSize: 24 }}>{index + 1}</Text>}>
+        <div style={{ marginTop: 16 }}>
+          <Text style={{ marginBottom: 16 }}>{module.prompt}</Text>
+          {/* <Form
+            <Form.Item label="Condition">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Go to">
+              <Input />
+            </Form.Item>
+          </Form> */}
+        </div>
+      </Card>
+    </Link>
   );
 }
 
 
-export default System
+export default Modules
