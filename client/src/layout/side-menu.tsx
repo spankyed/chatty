@@ -22,15 +22,10 @@ export default function SideMenu() {
   }
 
   const currSelected = `${Object.keys(matchingRoute).find((key) => matchingRoute[key] || dynamicMatches[key])}`;
-
-  console.log('currSelected: ', currSelected);
+  // console.log('currSelected: ', currSelected);
 
   // const match = useMatches();
   // console.log('match: ', match);
-  // console.log('systemMatch: ', systemMatch);
-
-
-
 
   const menuItems: MenuProps['items'] = routes.map(
     (route, index) => {
