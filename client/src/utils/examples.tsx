@@ -36,7 +36,7 @@ function App() {
 
 
 /**
- * Using React and the Ant design framework write an app that allows you to design the flow of a chatbot. 
+ * Using React and the Ant design framework write an app that allows you to design the ensemble of a chatbot. 
  * Make it in similar fashion to IBM Watson conversation, where action nodes recognize intents/entities and trigger child nodes. 
  * Should be a single page. The page should have be a list of Ant cards which are the nodes of the dialogue.
  */

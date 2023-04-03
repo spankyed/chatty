@@ -12,13 +12,14 @@ export default function SideMenu() {
   const matchingRoute: { [key: string]: PathMatch<string> | null } = {
     dialogue: useMatch("/dialogue"),
     catalog: useMatch("/catalog"),
+    agents: useMatch("/agents"),
     modules: useMatch("/system/modules"),
-    flows: useMatch("/system/flows"),
+    ensembles: useMatch("/system/ensembles"),
   }
 
   const dynamicMatches: { [key: string]: PathMatch<string> | null } = {
     modules: useMatch("/system/modules/:moduleId"),
-    flows: useMatch("/system/flows/:flowId"),
+    ensembles: useMatch("/system/ensembles/:ensembleId"),
   }
 
   const currSelected = `${Object.keys(matchingRoute).find((key) => matchingRoute[key] || dynamicMatches[key])}`;
@@ -39,9 +40,9 @@ export default function SideMenu() {
             label: <Link to={`/system/modules`} style={{ textTransform: 'capitalize' }}>Modules</Link>,
           },
           {
-            key: 'flows',
-            label: <Link to={`/system/flows`} style={{ textTransform: 'capitalize' }}>Flows</Link>,
-          }
+            key: 'ensembles',
+            label: <Link to={`/system/ensembles`} style={{ textTransform: 'capitalize' }}>Ensembles</Link>,
+          },
         ]
       };
     },

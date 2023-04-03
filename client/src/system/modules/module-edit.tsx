@@ -104,7 +104,9 @@ function ModuleEdit() {
           {/* <Radio.Group value={'twoWayBind?'}> */}
           <Radio.Group defaultValue='prompt'>
             <Radio.Button value="prompt">Prompt</Radio.Button>
-            <Radio.Button value="Search">Search</Radio.Button>
+            <Radio.Button value="search">Search</Radio.Button>
+            <Radio.Button value="dialogue">Dialogue</Radio.Button>
+            <Radio.Button value="code">Code</Radio.Button>
           </Radio.Group>
         </Form.Item>
         
@@ -112,7 +114,7 @@ function ModuleEdit() {
           <Input.TextArea style={{  resize: 'none', height: '7rem' }}/>
         </Form.Item>
 
-        <Form.Item label="Inputs (Responses)" name='inputs'>
+        <Form.Item label="Expected Inputs" name='inputs'>
           <Select mode="multiple">
             {
               otherModules.map((module: any) => <Option key={module.id} value={module.id}>{module.title}</Option>)

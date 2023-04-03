@@ -1,15 +1,22 @@
 import Layout from "./layout";
-import { LaptopOutlined, NotificationOutlined, PlusSquareOutlined, UserOutlined } from '@ant-design/icons';
+import { LaptopOutlined, NotificationOutlined, PartitionOutlined, UserOutlined, WechatOutlined, TableOutlined} from '@ant-design/icons';
 import System from "../system";
-import ModuleEdit, { action as moduleAction, loader as moduleLoader } from "../system/modules/module-edit";
 import Modules, { action as newModule, loader as modulesLoader} from "../system/modules";
+import ModuleEdit, { action as moduleAction, loader as moduleLoader } from "../system/modules/module-edit";
+import Ensembles, { action as newEnsemble, loader as ensemblesLoader} from "../system/ensembles";
+import EnsembleEdit, { action as ensembleAction, loader as ensembleLoader } from "../system/ensembles/edit";
 
 const routes = [
   {
+    name: 'agents',
+    element: <div>empty</div>,
+    icon: UserOutlined,
+  },
+  {
     name: 'system',
     element: <System/>,
-    icon: UserOutlined,
-    // going to /system should redirect to /system/flows
+    icon: PartitionOutlined,
+    // going to /system should redirect to /system/ensembles
     children: [
       {
         path: 'modules',
@@ -18,9 +25,15 @@ const routes = [
         action: newModule,
       },
       {
-        path: 'flows',
+        path: 'ensembles',
+        element: <Ensembles/>,
+        loader: ensemblesLoader,
+        action: newEnsemble,
+      },
+      {
+        path: 'bots',
         element: <div>empty</div>,
-        // element: <Flows/>,
+        // element: <Ensembles/>,
         // loader: systemLoader,
         // action: newModule,
       },
@@ -29,12 +42,12 @@ const routes = [
   {
     name: 'dialogue',
     element: <div>empty</div>,
-    icon: LaptopOutlined,
+    icon: WechatOutlined,
   },
   {
     name: 'catalog',
     element: <div>empty</div>,
-    icon: NotificationOutlined,
+    icon: TableOutlined,
     // loader: ()=>{},
     // action: ()=>{},
   }
@@ -50,12 +63,11 @@ const dynamicRoutes = [
     // errorElement: <h2>Note not found</h2>,
   },
   {
-    path: 'system/flows/:flowId',
+    path: 'system/ensembles/:ensembleId',
     dynamic: true,
-    element: <div>empty</div>,
-    // element: <FlowEdit/>,
-    // loader: flowLoader,
-    // action: flowAction,
+    element: <EnsembleEdit/>,
+    loader: ensembleLoader,
+    action: ensembleAction,
     // errorElement: <h2>Note not found</h2>,
   } 
 ]

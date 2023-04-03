@@ -3,7 +3,7 @@ import { useNavigate, Form as RouterForm, redirect, ActionFunctionArgs, LoaderFu
 import React from 'react';
 import { Button, Card, Input, Space, Typography, Form  } from 'antd';
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { createModule, getModules, Module } from "./api";
+import { createEnsemble, getEnsembles, Ensemble } from "./api";
 // import { useForm } from "react-hook-form";
 
 const { Meta } = Card;
@@ -33,16 +33,16 @@ const { Text } = Typography;
 
 export async function loader(args: LoaderFunctionArgs) {
   console.log('args: ', args);
-  const modules = await getModules();
-  console.log('modules: ', modules);
-  if (!modules) throw new Response("", { status: 404 });
-  return modules;
+  const ensembles = await getEnsembles();
+  console.log('ensembles: ', ensembles);
+  if (!ensembles) throw new Response("", { status: 404 });
+  return ensembles;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
   console.log('request: ', request);
   const formData = await request.formData();
-  const module = await createModule({
+  const ensemble = await createEnsemble({
     id: '',
     title: 'default title',
     // title: formData.get<("title"),
@@ -50,12 +50,12 @@ export async function action({ request }: ActionFunctionArgs) {
     isNew: true,
     // content: formData.get("content"),
   }); // todo have some default values
-  return redirect(`/system/modules/${module.id}`);
+  return redirect(`/system/ensembles/${ensemble.id}`);
 }
 
-function Modules() {
-  const modules = useLoaderData() as Module[];
-  console.log('modules: ', modules);
+function Ensembles() {
+  const ensembles = useLoaderData() as Ensemble[];
+  console.log('ensembles: ', ensembles);
 
   return (
     <>
@@ -78,8 +78,8 @@ function Modules() {
           size='large'
         >
           {/* <SaveOutlined /> */}
-          {/* <Text style={{ fontSize: 12 }}>Add a New Module</Text> */}
-          Add a New Module
+          {/* <Text style={{ fontSize: 12 }}>Add a New Ensemble</Text> */}
+          Add a New Ensemble
         </Button>
       </RouterForm>
 
@@ -88,14 +88,14 @@ function Modules() {
       <div className="w-full flex-grow flex flex-row flex-wrap mb-6 justify-start">
 
         {
-          modules.map((module, index) => {
+          ensembles.map((ensemble, index) => {
             return (
-              <ModuleItem key={index} module={module} index={index}/>
+              <EnsembleItem key={index} ensemble={ensemble} index={index}/>
             )
           })
           // (new Array(9)).fill(null).map((item, index) => {
           //   return (
-          //     <ModuleItem key={index} />
+          //     <EnsembleItem key={index} />
           //   )
           // })
 
@@ -107,17 +107,17 @@ function Modules() {
   );
 }
 
-function ModuleItem({ module, index }: { module: Module, index: number }) {
-  // console.log('module: ', module);
+function EnsembleItem({ ensemble, index }: { ensemble: Ensemble, index: number }) {
+  // console.log('ensemble: ', ensemble);
   let navigate = useNavigate();
   return (
-    <Link to={`/system/modules/${module.id}`} style={{ textTransform: 'capitalize' }}>
+    <Link to={`/system/ensembles/${ensemble.id}`} style={{ textTransform: 'capitalize' }}>
       <Card 
         className="m-2 p-2"
-        title={module.title} style={{ width: 300 }}  
+        title={ensemble.title} style={{ width: 300 }}  
         extra={<Text style={{ fontSize: 24 }}>{index + 1}</Text>}>
         <div style={{ marginTop: 16 }}>
-          <Text style={{ marginBottom: 16 }}>{module.prompt}</Text>
+          <Text style={{ marginBottom: 16 }}>{ensemble.prompt}</Text>
           {/* <Form
             <Form.Item label="Condition">
               <Input />
@@ -133,4 +133,4 @@ function ModuleItem({ module, index }: { module: Module, index: number }) {
 }
 
 
-export default Modules
+export default Ensembles
