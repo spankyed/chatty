@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select, Button, Divider, Form, Input } from 'antd';
 import { action } from '..';
 import { EnsemblePageModel, Step } from '../api';
@@ -32,12 +32,17 @@ const EditStep = ({ step }: { step: Step}) => {
   // todo remove unneccesary state
   const [showConditions, toggleConditions] = useState(false);
 
+  useEffect(() => {
+    if (step.conditionPaths.length > 0) {
+      toggleConditions(true);
+    }
+  }, []);
+
   const mockMods = [
     {id: 'module', title: 'Module 1'},
     {id: 'module2', title: 'Module 2'},
     {id: 'module3', title: 'Module 3'},
   ];
-
 
   const addCondition = () => {
     let newConditions = [...step.conditionPaths, {id: 'condition', condition: 'Condition 1', goto: 'module'}];
@@ -85,10 +90,7 @@ const EditStep = ({ step }: { step: Step}) => {
           </Form.Item>
         </Input.Group> */}
 
-
-        <div style={ {"outlineStyle": "dotted" }}>
-          {/* {step.hasConditions && ( */}
-          <div style={{display: 'flex', flexFlow: 'row wrap', minWidth: 0}}>   
+        <div style={{display: 'flex', flexFlow: 'row wrap', minWidth: 0}}>   
           <div 
             className="ant-col ant-col-5 ant-form-item-label" 
             style={{ flex: '0 0 20.833333333333336%' }}
@@ -96,25 +98,39 @@ const EditStep = ({ step }: { step: Step}) => {
             <div style={{textAlign: 'end'}}>
               Conditions
             </div>
+
           </div>  
-          </div>
+          <Button onClick={addCondition} className='ml-2'>Add Condition</Button>
 
+        </div>
           {showConditions && (
-              <>
-                <Form.Item label="condition" name='inputs'>
-
-                    {step.conditionPaths.map((path, index) => (
-                      <Input value={path.condition}></Input>
-                    ))}
-
-                    <Button onClick={addCondition}>Add Condition</Button>
-                </Form.Item>
-              </>
+            step.conditionPaths.map((path, index) => {
+              return (
+                <>
+                  <div style={ {"outlineStyle": "dotted" }}  className='m-4 py-2'>
+                    <Form.Item label="condition" name='inputs'>
+                      <Input key={index} value={path.condition}></Input>
+                    </Form.Item>
+                    <Form.Item label="Then" name='inputs'>
+                      <Select
+                        // defaultValue={step.conditionPaths[0]?.goto}
+                      >
+                        {/* cant hardcode value */}
+                        <Select.Option value="continue">Continue to Next Step</Select.Option>
+                        <Select.Option value="rerun">Rerun Step</Select.Option>
+                        <Select.Option value="ensemble">Go to Another Ensemble</Select.Option>
+                        <Select.Option value="end">End the Ensemble</Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                </>
+              )
+            })
           )}
 
-          <Form.Item label="Else" name='inputs'>
+        <Form.Item label="Default Action" name='inputs'>
             <Select
-              defaultValue={step.nextAction}
+              defaultValue={step.defaultAction}
             >
               {/* cant hardcode value */}
               <Select.Option value="continue">Continue to Next Step</Select.Option>
@@ -123,8 +139,6 @@ const EditStep = ({ step }: { step: Step}) => {
               <Select.Option value="end">End the Ensemble</Select.Option>
             </Select>
           </Form.Item>
-        </div>
-
 
       </Form>
         
