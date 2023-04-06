@@ -3,25 +3,9 @@ import { Button, Dropdown, Form, Input, MenuProps, Radio, Select, Slider } from 
 import SlidingPane from "react-sliding-pane";
 import { CloseCircleOutlined } from '@ant-design/icons';
 import PreviewTune from './preview-tune';
-import { loadEditModule, Module, PageModel, updateModule } from './api';
+import { loadEditModule, Module, ModulePageModel, updateModule } from './api';
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect, useFormAction, useLoaderData, useSubmit } from 'react-router-dom';
-
-export default ModuleEdit;
-
-const onMenuClick: MenuProps['onClick'] = e => {
-  console.log('click', e);
-};
-
-const items = [
-  {
-    key: '1',
-    label: 'Import Dataset',
-  },
-  {
-    key: '2',
-    label: 'Generate with AI',
-  },
-];
+import MultiInput from './multi-input';
 
 const layout = {
   labelCol: { span: 3 },
@@ -32,6 +16,21 @@ const tailLayout = {
   wrapperCol: { offset: 3, span: 16 },
 };
 
+const fineTuneClick: MenuProps['onClick'] = e => {
+  console.log('click', e);
+};
+
+const fineTuneOptions = [
+  {
+    key: '1',
+    label: 'Import Dataset',
+  },
+  {
+    key: '2',
+    label: 'Generate with AI',
+  },
+];
+
 export async function loader({ params }: LoaderFunctionArgs) {
   const id = params.moduleId
   if (!id) throw new Response("", { status: 404 });
@@ -41,20 +40,20 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log('request: ', request);
   const formData = await request.formData();
   const moduleData = Object.fromEntries(formData) as unknown as Module;
-  console.log('data: ', {moduleData, formData: [...formData]});
+  console.log('module edit formdata: ', {moduleData, formData: [...formData]});
   const module = await updateModule(moduleData.id, {
     id: moduleData.id,
     title: moduleData.title,
+    prompt: moduleData.prompt,
   }); // todo have some default values
 
   // todo combine delete action with this
-  return redirect(`/system`);
+  return redirect(`/system/modules`);
 }
 
-function ModuleEdit() {
+export default function ModuleEdit() {
   // const methods = useForm({
   //   defaultValues: {
   //     firstName: '',
@@ -63,26 +62,27 @@ function ModuleEdit() {
   // });
   let action = useFormAction();
   let submit = useSubmit();
-  const pageModel = useLoaderData() as PageModel;
+  const pageModel = useLoaderData() as ModulePageModel;
   const [paneOpen, togglePane] = useState(false);
   
   const { Option } = Select;
   const { modules, module } = pageModel;
   const otherModules = modules.filter((m: any) => m.id !== module.id);
+
+  const fin = (values: any) => {
+    const formData = new FormData();
+
+    console.log('values: ', values);
+    Object.keys(values).forEach(key => { formData.append(key, values[key] || '') });
+
+    submit(formData, { method: 'post',  action });
+  }
   
   return (
     <>
-      <Form {...layout} onFinish={(values: any) => {
-        
-        const formData = new FormData();
+      <Form {...layout} onFinish={fin}>
 
-        console.log('values: ', values);
-        Object.keys(values).forEach(key => { formData.append(key, values[key] || '') });
-
-        submit(formData, { method: 'post',  action });
-      }}>
-
-        <Form.Item label="Prompt" name='id' hidden={true} initialValue={module.id}>
+        <Form.Item label="hiddenId" name='id' hidden={true} initialValue={module.id}>
           <Input hidden={true} value={module.id} />
         </Form.Item>
 
@@ -96,8 +96,9 @@ function ModuleEdit() {
             //   message: 'Name can only include letters and numbers.',
             // },
           ]}
+          initialValue={module.title}
         >
-          <Input placeholder="Natural Language Processor" name='title'/>
+          <Input placeholder="Natural Language Processor" name='title' value={module.title}/>
         </Form.Item>
 
         <Form.Item label="Task Type" name='taskType'>
@@ -110,16 +111,17 @@ function ModuleEdit() {
           </Radio.Group>
         </Form.Item>
         
-        <Form.Item label="Prompt" name='prompt'>
-          <Input.TextArea style={{  resize: 'none', height: '7rem' }}/>
+        <Form.Item label="Prompt" name='prompt' initialValue={module.prompt}>
+          <Input.TextArea style={{  resize: 'none', height: '7rem' }} value={module.prompt}/>
         </Form.Item>
 
         <Form.Item label="Expected Inputs" name='inputs'>
-          <Select mode="multiple">
+          {/* <Select mode="multiple" disabled={true} defaultValue={['test','test2']}>
             {
               otherModules.map((module: any) => <Option key={module.id} value={module.id}>{module.title}</Option>)
             }
-          </Select>
+          </Select> */}
+          <MultiInput />
         </Form.Item>
 
         <Form.Item label="Template" name='template'>
@@ -152,7 +154,7 @@ function ModuleEdit() {
           {/* <Button htmlType="button" onClick={()=>{}}>
             Fine-Tune
           </Button> */}
-          <Dropdown.Button disabled={true} menu={{ items, onClick: onMenuClick }} className="inline mr-2">
+          <Dropdown.Button disabled={true} menu={{ items: fineTuneOptions, onClick: fineTuneClick }} className="inline mr-2">
             Fine-Tune
           </Dropdown.Button>
           <Button type="link" htmlType="button" onClick={() => togglePane(!paneOpen)} className="mr-2">

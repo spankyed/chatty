@@ -1,92 +1,60 @@
 import React, { useState } from 'react';
-import { Card, List, Divider, Row, Col, Input } from 'antd';
+import { Card, List, Divider, Row, Col, Input, Button } from 'antd';
 import { LoaderFunctionArgs, ActionFunctionArgs, redirect } from 'react-router-dom';
-import { loadEditEnsemble, Ensemble, updateEnsemble } from '../api';
+import { loadEditEnsemble, Ensemble, updateEnsemble, EnsemblePageModel } from '../api';
 import StepList from './step-list';
 import EditStep from './edit-step';
-export default DialogueEnsembleEditor;
-
-const testData = [
-  {
-    id: 1,
-    description: 'Greet the user',
-    module: 'greeting',
-    hasConditions: false,
-    conditions: [],
-    nextAction: 'continue'
-  },
-  {
-    id: 2,
-    description: 'Ask the user for their name',
-    module: 'input',
-    hasConditions: false,
-    conditions: [],
-    nextAction: 'continue'
-  },
-  {
-    id: 3,
-    description: 'Say goodbye to the user',
-    module: 'goodbye',
-    hasConditions: false,
-    conditions: [],
-    nextAction: 'end'
-  }
-];
+import { useFormAction, useSubmit, useLoaderData } from 'react-router-dom';
+import { PlusCircleOutlined } from '@ant-design/icons';
 
 
-function DialogueEnsembleEditor(){
+export default function EnsembleEditor(){
   const [selectedStep, setSelectedStep] = useState(null);
-  const [dialogueSteps, setDialogueSteps] = useState([]);
+  // const [dialogueSteps, setDialogueSteps] = useState([]);
   const [conditions, setConditions] = useState([]);
 
-  const handleStepClick = (step) => {
+  const handleStepClick = (step: any) => {
     setSelectedStep(step);
   };
 
-  const handleModuleChange = (value) => {
-    // Update the selected step's module
-  };
-
-  const handleConditionsChange = (value) => {
-    // Update the selected step's hasConditions flag
-  };
-
-  const handleConditionChange = (index, value) => {
-    // Update the condition at the given index
-  };
-
-  const handleAddConditionClick = () => {
-    // Add a new condition to the list
-  };
-
-  const handleNextActionChange = (value) => {
-    // Update the selected step's nextAction
-  };
+  // let action = useFormAction();
+  // let submit = useSubmit();
+  // const ensembleModel = useLoaderData() as EnsemblePageModel;
+  const { ensemble } = useLoaderData() as EnsemblePageModel;
 
   return (
     <>
-      <Input placeholder="Natural Language Processor" name='title' className='w-1/3 mb-4'/>
+      <Input placeholder="Natural Language Processor" name='title' className='w-1/3 mb-4' value={ensemble.title}/>
       <Row gutter={16}>
 
         <Col span={8}>
           <StepList
-            dialogueSteps={testData}
-            onStepClick={handleStepClick}
+            steps={ensemble.steps}
+            selectStep={handleStepClick}
           />
+          <Button 
+            type="primary" 
+            // htmlType="submit"
+            onClick={() => {console.log('add new step')}}
+            className="flex self-center justify-center"
+            icon={
+              <PlusCircleOutlined 
+              style={{ marginTop: '5px' }}
+              />
+            } 
+            size='large'
+          >
+            {/* <SaveOutlined /> */}
+            {/* <Text style={{ fontSize: 12 }}>Add a New Module</Text> */}
+            New Step
+          </Button>
         </Col>
 
         <Col span={16}>
           <EditStep
-            step={testData[0]}
-            conditions={conditions}
-            onModuleChange={handleModuleChange}
-            onConditionsChange={handleConditionsChange}
-            onConditionChange={handleConditionChange}
-            onAddConditionClick={handleAddConditionClick}
-            onNextActionChange={handleNextActionChange}
+            step={selectedStep ? selectedStep : ensemble.steps[0]}
           />
         </Col>
-
 
       </Row>
     </>
@@ -95,24 +63,25 @@ function DialogueEnsembleEditor(){
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const id = params.ensembleId
-  console.log('id: ', id);
+  console.log('ensemble id: ', id);
   if (!id) throw new Response("", { status: 404 });
-  const pageModel = await loadEditEnsemble(id);
-  console.log('pageModel: ', pageModel);
-  if (!pageModel) throw new Response("", { status: 404 });
-  return pageModel;
+  const ensemble = await loadEditEnsemble(id);
+  console.log('ensemble: ', ensemble);
+  if (!ensemble) throw new Response("", { status: 404 });
+  return ensemble;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log('request: ', request);
+  console.log('update ensemble: ', {request});
   const formData = await request.formData();
   const ensembleData = Object.fromEntries(formData) as unknown as Ensemble;
   console.log('data: ', {ensembleData, formData: [...formData]});
   const ensemble = await updateEnsemble(ensembleData.id, {
     id: ensembleData.id,
     title: ensembleData.title,
-  }); // todo have some default values
+    steps: []
+  });
 
   // todo combine delete action with this
-  return redirect(`/system`);
+  return redirect(`/system/ensembles`);
 }

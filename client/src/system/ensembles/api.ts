@@ -1,15 +1,29 @@
 import localforage from "localforage";
+import { Module } from "../modules/api";
 
 // localforage.clear();
 
-export type Ensemble = {
+export type Path = {
   id: string;
-  title: string;
-  prompt?: string;
-  isNew?: boolean;
+  condition?: string;
+  goto?: string;
+}
+export type Step = {
+  id: string;
+  module?: Module;
+  inputFrom?: string;
+  conditionPaths: Path[];
+  defaultAction: string;
 }
 
-export type PageModel = {
+export type Ensemble = {
+  isNew?: boolean;
+  id: string;
+  title: string;
+  steps: Step[];
+}
+
+export type EnsemblePageModel = {
   ensembles: Ensemble[];
   ensemble: Ensemble;
 }
@@ -24,8 +38,18 @@ async function get(): Promise<Ensemble[]> {
   return ensembles;
 }
 
+export async function getEnsembles(): Promise<Ensemble[]> {
+  return await get();
+}
 
-export async function loadEditEnsemble(id: string): Promise<PageModel | false> { // todo type
+// export async function getEnsemble(id: string) {
+//   let ensembles = await get();
+//   if (!ensembles.length) return false;
+//   let ensemble = ensembles.find((ensemble) => ensemble.id === id);
+//   return ensemble ?? null;
+// }
+
+export async function loadEditEnsemble(id: string): Promise<EnsemblePageModel | false> { // todo type
   let ensembles = await get();
   let ensemble = ensembles.find((ensemble) => ensemble.id === id)
   if (!ensembles.length || !ensemble) return false; // iffy
@@ -33,20 +57,9 @@ export async function loadEditEnsemble(id: string): Promise<PageModel | false> {
   return { ensembles, ensemble };
 }
 
-export async function getEnsembles(): Promise<Ensemble[]> {
-  return await get();
-}
-
-export async function getEnsemble(id: string) {
-  let ensembles = await get();
-  if (!ensembles.length) return false;
-  let ensemble = ensembles.find((ensemble) => ensemble.id === id);
-  return ensemble ?? null;
-}
-
-export async function createEnsemble({ title, prompt }: Ensemble) {
+export async function createEnsemble({ title }: Ensemble) {
   let id = Math.random().toString(36).substring(2, 9);
-  let ensemble = { id, title, prompt };
+  let ensemble = { id, title, steps: [{ id: '1', conditionPaths: [], defaultAction: 'continue'}] };
   // let ensemble = { id, title: '', content: '' };
   let ensembles = await getEnsembles();
   // ensembles.unshift(ensemble);

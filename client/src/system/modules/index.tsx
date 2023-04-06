@@ -32,16 +32,15 @@ const { Text } = Typography;
 // );
 
 export async function loader(args: LoaderFunctionArgs) {
-  console.log('args: ', args);
+  console.log('module loader args: ', args);
   const modules = await getModules();
-  console.log('modules: ', modules);
   if (!modules) throw new Response("", { status: 404 });
   return modules;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log('request: ', request);
   const formData = await request.formData();
+  console.log('create module formdata: ', formData);
   const module = await createModule({
     id: '',
     title: 'default title',

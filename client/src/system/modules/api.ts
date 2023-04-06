@@ -7,9 +7,13 @@ export type Module = {
   title: string;
   prompt?: string;
   isNew?: boolean;
+  // taskType?: string;
+  // template?: string;
+  // expectedInput?: string[];
 }
 
-export type PageModel = {
+
+export type ModulePageModel = {
   modules: Module[];
   module: Module;
 }
@@ -25,7 +29,7 @@ async function get(): Promise<Module[]> {
 }
 
 
-export async function loadEditModule(id: string): Promise<PageModel | false> { // todo type
+export async function loadEditModule(id: string): Promise<ModulePageModel | false> { // todo type
   let modules = await get();
   let module = modules.find((module) => module.id === id)
   if (!modules.length || !module) return false; // iffy
@@ -45,8 +49,9 @@ export async function getModule(id: string) {
 }
 
 export async function createModule({ title, prompt }: Module) {
+  console.log('createModule: ',  { title, prompt });
   let id = Math.random().toString(36).substring(2, 9);
-  let module = { id, title, prompt };
+  let module = { id, title, prompt } as Module;
   // let module = { id, title: '', content: '' };
   let modules = await getModules();
   // modules.unshift(module);
