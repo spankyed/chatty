@@ -4,7 +4,7 @@ import System from "../system";
 import Modules, { action as newModule, loader as modulesLoader} from "../system/modules";
 import ModuleEdit, { action as moduleAction, loader as moduleLoader } from "../system/modules/module-edit";
 import Ensembles, { action as newEnsemble, loader as ensemblesLoader} from "../system/ensembles";
-import EnsembleEdit, { action as ensembleAction, loader as ensembleLoader } from "../system/ensembles/edit";
+import EnsembleEdit, { action as ensembleAction, loader as ensembleLoader } from "../system/ensembles/edit/edit";
 
 const routes = [
   {

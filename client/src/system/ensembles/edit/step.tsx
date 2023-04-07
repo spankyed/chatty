@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Select, Button, Divider, Form, Input } from 'antd';
 import { action } from '..';
-import { EnsemblePageModel, Step } from '../api';
+import { EnsemblePageModel, Path, Step } from '../api';
+import { useStepContext } from './ctx';
 
 
 const layout = {
@@ -24,17 +25,19 @@ const EditStep = ({ step }: { step: Step}) => {
   // if (!step) {
   //   return null;
   // }
-
+  const { steps, addStep, updateStep, remove } = useStepContext();
+  console.log('addStep: ', addStep);
+  
+  // console.log('val2: ', val);
   
   const { Option } = Select;
   // const { modules, module } = pageModel;
 
-  // todo remove unneccesary state
-  const [showConditions, toggleConditions] = useState(false);
+  const [conditions, updateConditions] = useState([] as Path[]);
 
   useEffect(() => {
     if (step.conditionPaths.length > 0) {
-      toggleConditions(true);
+      updateConditions(step.conditionPaths);
     }
   }, []);
 
@@ -47,11 +50,17 @@ const EditStep = ({ step }: { step: Step}) => {
   const addCondition = () => {
     let newConditions = [...step.conditionPaths, {id: 'condition', condition: 'Condition 1', goto: 'module'}];
     step.conditionPaths = newConditions;
+    updateConditions(step.conditionPaths);
+  }
+
+  const onConditionsChange = (idx: number, prop: Path['condition'] | Path['goto']) => (value: string) => {
+    console.log('value: ', value);
+    console.log('change')
+    // step.conditionPaths[idx][prop] = value;
   }
 
   return (
     <>
-
       <Form {...layout} onFinish={(values: any) => {
         const formData = new FormData();
         Object.keys(values).forEach(key => { formData.append(key, values[key] || '') });
@@ -69,15 +78,19 @@ const EditStep = ({ step }: { step: Step}) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Inputs From" name='inputs'>
-          <Select
-            defaultValue={step.module}
-          >
-            {
-              mockMods.map((module: any) => <Option key={module.id} value={module.id}>{module.title}</Option>)
-            }
-          </Select>
-        </Form.Item>
+        <fieldset className="arh-fieldset">
+          <legend style={{ all: 'unset' }}>Inputs From</legend>
+          <Form.Item label="Input 1" name='inputs'>
+            <Select
+              defaultValue={step.module}
+            >
+              {
+                mockMods.map((module: any) => <Option key={module.id} value={module.id}>{module.title}</Option>)
+              }
+            </Select>
+          </Form.Item>
+        </fieldset>
+
         {/* <Input.Group compact>
           <Form.Item name='inputs' {...compactLayout}>
             <Select
@@ -90,29 +103,25 @@ const EditStep = ({ step }: { step: Step}) => {
           </Form.Item>
         </Input.Group> */}
 
-        <div style={{display: 'flex', flexFlow: 'row wrap', minWidth: 0}}>   
-          <div 
-            className="ant-col ant-col-5 ant-form-item-label" 
-            style={{ flex: '0 0 20.833333333333336%' }}
-            onClick={() => toggleConditions(!showConditions)}>
-            <div style={{textAlign: 'end'}}>
-              Conditions
-            </div>
-
-          </div>  
+        <fieldset className="mb-4">
+          <legend style={{ all: 'unset' }}>Conditions</legend>
           <Button onClick={addCondition} className='ml-2'>Add Condition</Button>
-
-        </div>
-          {showConditions && (
-            step.conditionPaths.map((path, index) => {
+          {
+            conditions.map((path, index) => {
               return (
                 <>
                   <div style={ {"outlineStyle": "dotted" }}  className='m-4 py-2'>
-                    <Form.Item label="condition" name='inputs'>
-                      <Input key={index} value={path.condition}></Input>
+                    <Form.Item label="condition" name={`condition${index}`}>
+                      <Input 
+                      key={index} 
+                      value={path.condition}
+                      onChange={onConditionsChange(index, 'goto')}>
+
+                      </Input>
                     </Form.Item>
-                    <Form.Item label="Then" name='inputs'>
+                    <Form.Item label="Then" name={`goto${index}`}>
                       <Select
+                        onChange={onConditionsChange(index, 'goto')}
                         // defaultValue={step.conditionPaths[0]?.goto}
                       >
                         {/* cant hardcode value */}
@@ -126,19 +135,20 @@ const EditStep = ({ step }: { step: Step}) => {
                 </>
               )
             })
-          )}
+          }
+        </fieldset>
 
-        <Form.Item label="Default Action" name='inputs'>
-            <Select
-              defaultValue={step.defaultAction}
-            >
-              {/* cant hardcode value */}
-              <Select.Option value="continue">Continue to Next Step</Select.Option>
-              <Select.Option value="rerun">Rerun Step</Select.Option>
-              <Select.Option value="ensemble">Go to Another Ensemble</Select.Option>
-              <Select.Option value="end">End the Ensemble</Select.Option>
-            </Select>
-          </Form.Item>
+        <Form.Item label="Default Action" name='defaultAction'>
+          <Select
+            defaultValue={step.defaultAction}
+          >
+            {/* cant hardcode value */}
+            <Select.Option value="continue">Continue to Next Step</Select.Option>
+            <Select.Option value="rerun">Rerun Step</Select.Option>
+            <Select.Option value="ensemble">Go to Another Ensemble</Select.Option>
+            <Select.Option value="end">End the Ensemble</Select.Option>
+          </Select>
+        </Form.Item>
 
       </Form>
         

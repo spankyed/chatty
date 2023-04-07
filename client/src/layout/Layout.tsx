@@ -64,7 +64,7 @@ export default function AppLayout() {
             </div> */}
 
             <Content
-              className="site-layout-background text-black"
+              className="site-layout-background text-black main-content"
               style={{
                 padding: '0 24px',
                 margin: 0,

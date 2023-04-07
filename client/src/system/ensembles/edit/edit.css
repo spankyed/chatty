@@ -1,0 +1,35 @@
+.steps-wrapper { 
+  height: 100%;
+  max-height: calc(100% - 72px);
+  overflow: auto;
+  position: relative;
+}
+
+.form-submit{
+  z-index: 1;
+  background: #f4f4f4;
+  border-top: 1px solid #e0e0e0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  position: -webkit-sticky;
+  position: sticky;
+  text-align: right;
+}
+
+.ensemble-title {
+  align-items: flex-end;
+  display: flex;
+  flex: 2 1;
+  max-width: 25rem;
+  min-width: min(38vw,18rem);
+}
+
+.ensemble-header-wrap {
+  align-items: baseline;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: row;
+  height: 3rem;
+  width: 100%;
+}

@@ -5,8 +5,8 @@ import { Module } from "../modules/api";
 
 export type Path = {
   id: string;
-  condition?: string;
-  goto?: string;
+  condition: string;
+  goto: string;
 }
 export type Step = {
   id: string;

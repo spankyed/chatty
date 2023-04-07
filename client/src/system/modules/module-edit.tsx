@@ -31,28 +31,6 @@ const fineTuneOptions = [
   },
 ];
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  const id = params.moduleId
-  if (!id) throw new Response("", { status: 404 });
-  const pageModel = await loadEditModule(id);
-  if (!pageModel) throw new Response("", { status: 404 });
-  return pageModel;
-}
-
-export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const moduleData = Object.fromEntries(formData) as unknown as Module;
-  console.log('module edit formdata: ', {moduleData, formData: [...formData]});
-  const module = await updateModule(moduleData.id, {
-    id: moduleData.id,
-    title: moduleData.title,
-    prompt: moduleData.prompt,
-  }); // todo have some default values
-
-  // todo combine delete action with this
-  return redirect(`/system/modules`);
-}
-
 export default function ModuleEdit() {
   // const methods = useForm({
   //   defaultValues: {
@@ -81,6 +59,21 @@ export default function ModuleEdit() {
   return (
     <>
       <Form {...layout} onFinish={fin}>
+
+        {/* <Form.Item {...tailLayout}>
+          <Button type="primary" htmlType="submit" className="mr-2 bg-blue-700 hover:bg-blue-100">
+            Done
+          </Button>
+          <Dropdown.Button disabled={true} menu={{ items: fineTuneOptions, onClick: fineTuneClick }} className="inline mr-2">
+            Fine-Tune
+          </Dropdown.Button>
+          <Button type="link" htmlType="button" onClick={() => togglePane(!paneOpen)} className="mr-2">
+            Preview & Tune
+          </Button>
+          <Button disabled={true} type="primary" htmlType="submit" className="mr-2 bg-red-700 hover:bg-red-100 float-right">
+            Delete
+          </Button>
+        </Form.Item> */}
 
         <Form.Item label="hiddenId" name='id' hidden={true} initialValue={module.id}>
           <Input hidden={true} value={module.id} />
@@ -126,14 +119,6 @@ export default function ModuleEdit() {
 
         <Form.Item label="Template" name='template'>
           <Input.TextArea style={{  resize: 'none', height: '15rem' }}/>
-        </Form.Item>
-
-        <Form.Item label="Go To" name='goTo'>
-          <Select>
-            {
-              otherModules.map((module: any) => <Option key={module.id} value={module.id}>{module.title}</Option>)
-            }
-          </Select>
         </Form.Item>
 
         {/* <Form.Item>
@@ -185,3 +170,24 @@ export default function ModuleEdit() {
   );
 };
 
+export async function loader({ params }: LoaderFunctionArgs) {
+  const id = params.moduleId
+  if (!id) throw new Response("", { status: 404 });
+  const pageModel = await loadEditModule(id);
+  if (!pageModel) throw new Response("", { status: 404 });
+  return pageModel;
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const moduleData = Object.fromEntries(formData) as unknown as Module;
+  console.log('module edit formdata: ', {moduleData, formData: [...formData]});
+  const module = await updateModule(moduleData.id, {
+    id: moduleData.id,
+    title: moduleData.title,
+    prompt: moduleData.prompt,
+  }); // todo have some default values
+
+  // todo combine delete action with this
+  return redirect(`/system/modules`);
+}

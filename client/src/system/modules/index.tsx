@@ -31,27 +31,6 @@ const { Text } = Typography;
 //   </div>
 // );
 
-export async function loader(args: LoaderFunctionArgs) {
-  console.log('module loader args: ', args);
-  const modules = await getModules();
-  if (!modules) throw new Response("", { status: 404 });
-  return modules;
-}
-
-export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  console.log('create module formdata: ', formData);
-  const module = await createModule({
-    id: '',
-    title: 'default title',
-    // title: formData.get<("title"),
-    prompt: '',
-    isNew: true,
-    // content: formData.get("content"),
-  }); // todo have some default values
-  return redirect(`/system/modules/${module.id}`);
-}
-
 function Modules() {
   const modules = useLoaderData() as Module[];
   console.log('modules: ', modules);
@@ -131,5 +110,25 @@ function ModuleItem({ module, index }: { module: Module, index: number }) {
   );
 }
 
+export async function loader(args: LoaderFunctionArgs) {
+  console.log('module loader args: ', args);
+  const modules = await getModules();
+  if (!modules) throw new Response("", { status: 404 });
+  return modules;
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  console.log('create module formdata: ', formData);
+  const module = await createModule({
+    id: '',
+    title: 'default title',
+    // title: formData.get<("title"),
+    prompt: '',
+    isNew: true,
+    // content: formData.get("content"),
+  }); // todo have some default values
+  return redirect(`/system/modules/${module.id}`);
+}
 
 export default Modules
