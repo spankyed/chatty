@@ -54,8 +54,8 @@ const StepList = ({ }: any) => {
         Fine-Tune
       </Dropdown.Button> */}
       <List
-       style={{ maxHeight: 'calc(100% - 42px)'}}
-       className='overflow-auto p-0'
+        style={{ maxHeight: 'calc(100% - 42px)'}}
+        className='overflow-auto p-0'
         dataSource={steps}
         renderItem={renderStep}
       />

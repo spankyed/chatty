@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Dropdown, Form, Input, MenuProps, Radio, Select, Slider } from 'antd';
-import {  ModulePageModel, updateModule } from './api';
+import {  ModulePageModel, updateModule } from '../api';
 import { useFormAction, useLoaderData, useSubmit } from 'react-router-dom';
 
 // export default function MultiInput2() {

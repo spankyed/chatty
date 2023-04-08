@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Select, Button, Divider, Form, Input } from 'antd';
-import { action } from '..';
+import { action } from '../ensembles';
 import { EnsemblePageModel, Path, Step } from '../api';
 import { useStepContext } from './ctx';
 

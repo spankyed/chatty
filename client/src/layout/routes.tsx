@@ -1,11 +1,11 @@
 import Layout from "./layout";
 import { LaptopOutlined, NotificationOutlined, PartitionOutlined, UserOutlined, WechatOutlined, TableOutlined, DatabaseOutlined} from '@ant-design/icons';
 import System from "../system";
-import Modules, { action as newModule, loader as modulesLoader} from "../system/modules";
-import ModuleEdit, { action as moduleAction, loader as moduleLoader } from "../system/modules/module-edit";
-import Ensembles, { action as newEnsemble, loader as ensemblesLoader} from "../system/ensembles";
+import Modules, { action as newModule, loader as modulesLoader} from "../system/modules/modules";
+import ModuleEdit, { action as moduleAction, loader as moduleLoader } from "../system/modules/edit/module-edit";
+import Ensembles, { action as newEnsemble, loader as ensemblesLoader} from "../system/ensembles/ensembles";
 import EnsembleEdit, { action as ensembleAction, loader as ensembleLoader } from "../system/ensembles/edit/edit";
-import Dialogues from "../system/dialogues";
+import Dialogues from "../system/dialogues/dialogues";
 // import Dialogues, { action as newDialogue, loader as dialoguesLoader} from "../system/dialogues";
 // import DialogueEdit, { action as dialogueAction, loader as dialogueLoader } from "../system/dialogues/edit/edit";
 

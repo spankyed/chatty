@@ -3,7 +3,7 @@ import { Button, Dropdown, Form, Input, MenuProps, Radio, Select, Slider } from 
 import SlidingPane from "react-sliding-pane";
 import { CloseCircleOutlined } from '@ant-design/icons';
 import PreviewTune from './preview-tune';
-import { loadEditModule, Module, ModulePageModel, updateModule } from './api';
+import { loadEditModule, Module, ModulePageModel, updateModule } from '../api';
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect, useFormAction, useLoaderData, useSubmit } from 'react-router-dom';
 import MultiInput from './multi-input';
 
