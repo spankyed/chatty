@@ -7,6 +7,7 @@ import EditStep from './step';
 import { useFormAction, useSubmit, useLoaderData } from 'react-router-dom';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { StepProvider } from './ctx';
+import { getModules } from "../../modules/api";
 // import { EnsembleContext } from './ctx';
 import './edit.css'
 
@@ -88,7 +89,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   // console.log('ensemble id: ', id);
   if (!id) throw new Response("", { status: 404 });
   const ensemble = await loadEditEnsemble(id);
-  // console.log('ensemble: ', ensemble);
+  const modules = await getModules();
+  
+  console.log('ensemble w/ modules: ', {ensemble,modules});
   if (!ensemble) throw new Response("", { status: 404 });
   return ensemble;
 }
