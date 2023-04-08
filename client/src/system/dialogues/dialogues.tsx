@@ -1,13 +1,61 @@
 import { useNavigate, Form as RouterForm, redirect, ActionFunctionArgs, LoaderFunctionArgs, useLoaderData, Link } from "react-router-dom";
 import { createDialogue, getDialogues } from './api';
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Space, Table, Tag } from 'antd';
 import { Dialogue } from '../dialogues/api';
+
+const columns = [
+  {
+    title: 'Title',
+    dataIndex: 'title',
+    key: 'title',
+    // render: (text: string) => <a>{text}</a>,
+  },
+  // {
+  //   title: 'Tags',
+  //   key: 'tags',
+  //   dataIndex: 'tags',
+  //   render: (_: any, { tags }: { tags: string[]}) => (
+  //     <>
+  //       {tags.map((tag) => {
+  //         let color = tag.length > 5 ? 'geekblue' : 'green';
+  //         if (tag === 'loser') {
+  //           color = 'volcano';
+  //         }
+  //         return (
+  //           <Tag color={color} key={tag}>
+  //             {tag.toUpperCase()}
+  //           </Tag>
+  //         );
+  //       })}
+  //     </>
+  //   ),
+  // },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_: any, dialogue: Dialogue) => (
+      <Space size="middle">
+        <Link to={`/system/dialogues/${dialogue.id}`} style={{ textTransform: 'capitalize' }}>
+          Edit
+        </Link>
+        <a>Delete</a>
+      </Space>
+    ),
+  },
+];
 
 function Dialogues({}: any) {
   const dialogues = useLoaderData() as Dialogue[];
-  console.log('dialogues: ', dialogues);
 
+  const dialoguesWithKeys = dialogues.map((dialogue) => {
+    return {
+      ...dialogue,
+      key: dialogue.id,
+    }
+  });
+
+  console.log('dialogues: ', dialogues);
 
   return (
     <>
@@ -36,37 +84,13 @@ function Dialogues({}: any) {
       </RouterForm>
 
       <div className="w-full flex-grow flex flex-row flex-wrap mb-6 justify-start">
-
-        {
-          dialogues.map((dialogue, index) => {
-            return (
-              <DialogueItem key={index} dialogue={dialogue} index={index}/>
-            )
-          })
-          // (new Array(9)).fill(null).map((item, index) => {
-          //   return (
-          //     <DialogueItem key={index} />
-          //   )
-          // })
-
-        }
+        <Table dataSource={dialoguesWithKeys} columns={columns} className="w-full"/>
       </div>
 
     </div>
     </>
   );
 }
-
-function DialogueItem({ dialogue, index }: { dialogue: Dialogue, index: number }) {
-  // console.log('dialogue: ', dialogue);
-  let navigate = useNavigate();
-  return (
-    <Link to={`/system/dialogues/${dialogue.id}`} style={{ textTransform: 'capitalize' }}>
-      Test dialogue
-    </Link>
-  );
-}
-
 
 export async function loader(args: LoaderFunctionArgs) {
   console.log('dialogue loader args: ', args);

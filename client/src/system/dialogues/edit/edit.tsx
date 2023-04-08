@@ -38,6 +38,21 @@ function Dialogues({}: any) {
     <>
       <Form {...layout} onFinish={fin}>
 
+        <Form.Item 
+          label="Title"
+          name="title"
+          rules={[
+            { required: true, message: 'Please input a title' },
+            // {
+            //   pattern: /^[a-zA-Z0-9]+$/,
+            //   message: 'Name can only include letters and numbers.',
+            // },
+          ]}
+          initialValue={dialogue.title}
+        >
+          <Input placeholder="Default dialogue title" name='title' value={dialogue.title}/>
+        </Form.Item>
+
         <Form.Item label="Text" name='text' initialValue={dialogue.text}>
           <Input.TextArea style={{  resize: 'none', height: '7rem' }} value={dialogue.text}/>
         </Form.Item>
