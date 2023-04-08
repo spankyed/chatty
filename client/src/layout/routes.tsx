@@ -1,10 +1,13 @@
 import Layout from "./layout";
-import { LaptopOutlined, NotificationOutlined, PartitionOutlined, UserOutlined, WechatOutlined, TableOutlined} from '@ant-design/icons';
+import { LaptopOutlined, NotificationOutlined, PartitionOutlined, UserOutlined, WechatOutlined, TableOutlined, DatabaseOutlined} from '@ant-design/icons';
 import System from "../system";
 import Modules, { action as newModule, loader as modulesLoader} from "../system/modules";
 import ModuleEdit, { action as moduleAction, loader as moduleLoader } from "../system/modules/module-edit";
 import Ensembles, { action as newEnsemble, loader as ensemblesLoader} from "../system/ensembles";
 import EnsembleEdit, { action as ensembleAction, loader as ensembleLoader } from "../system/ensembles/edit/edit";
+import Dialogues from "../system/dialogues";
+// import Dialogues, { action as newDialogue, loader as dialoguesLoader} from "../system/dialogues";
+// import DialogueEdit, { action as dialogueAction, loader as dialogueLoader } from "../system/dialogues/edit/edit";
 
 const routes = [
   {
@@ -13,10 +16,15 @@ const routes = [
     icon: UserOutlined,
   },
   {
+    name: 'database',
+    element: <div>empty</div>,
+    icon: DatabaseOutlined,
+  },
+  {
     name: 'system',
     element: <System/>,
     icon: PartitionOutlined,
-    // going to /system should redirect to /system/ensembles
+    // todo going to /system should redirect to /system/modules
     children: [
       {
         path: 'modules',
@@ -31,18 +39,13 @@ const routes = [
         action: newEnsemble,
       },
       {
-        path: 'bots',
-        element: <div>empty</div>,
-        // element: <Ensembles/>,
-        // loader: systemLoader,
-        // action: newModule,
+        path: 'dialogues',
+        element: <Dialogues/>,
+        // icon: WechatOutlined,
+        // loader: ensemblesLoader,
+        // action: newEnsemble,
       },
     ]
-  },
-  {
-    name: 'dialogue',
-    element: <div>empty</div>,
-    icon: WechatOutlined,
   },
   {
     name: 'catalog',
@@ -50,8 +53,8 @@ const routes = [
     icon: TableOutlined,
     // loader: ()=>{},
     // action: ()=>{},
-  }
-]
+  },
+  ]
 
 const dynamicRoutes = [
   {
@@ -68,6 +71,15 @@ const dynamicRoutes = [
     element: <EnsembleEdit/>,
     loader: ensembleLoader,
     action: ensembleAction,
+    // errorElement: <h2>Note not found</h2>,
+  },
+  {
+    path: 'system/dialogues/:dialogueId',
+    dynamic: true,
+    element: <div>empty</div>,
+    // element: <DialogueEdit/>,
+    // loader: dialogueLoader,
+    // action: dialogueAction,
     // errorElement: <h2>Note not found</h2>,
   } 
 ]
@@ -89,6 +101,7 @@ const router = [
     ],
   },
 ]
+console.log('router: ', router);
 
 export {
   router,

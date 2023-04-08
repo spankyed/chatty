@@ -10,16 +10,18 @@ const { Sider } = Section;
 export default function SideMenu() {
 
   const matchingRoute: { [key: string]: PathMatch<string> | null } = {
-    dialogue: useMatch("/dialogue"),
     catalog: useMatch("/catalog"),
     agents: useMatch("/agents"),
+    database: useMatch("/database"),
     modules: useMatch("/system/modules"),
     ensembles: useMatch("/system/ensembles"),
+    dialogues: useMatch("/system/dialogues"),
   }
 
   const dynamicMatches: { [key: string]: PathMatch<string> | null } = {
     modules: useMatch("/system/modules/:moduleId"),
     ensembles: useMatch("/system/ensembles/:ensembleId"),
+    dialogues: useMatch("/system/dialogues/:dialogueId"),
   }
 
   const currSelected = `${Object.keys(matchingRoute).find((key) => matchingRoute[key] || dynamicMatches[key])}`;
@@ -42,6 +44,10 @@ export default function SideMenu() {
           {
             key: 'ensembles',
             label: <Link to={`/system/ensembles`} style={{ textTransform: 'capitalize' }}>Ensembles</Link>,
+          },
+          {
+            key: 'dialogue',
+            label: <Link to={`/system/dialogues`} style={{ textTransform: 'capitalize' }}>Dialogues</Link>,
           },
         ]
       };

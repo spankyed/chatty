@@ -9,7 +9,7 @@ function Navigation() {
   return (
     <>
       <Header className="header">
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }} className='inline'>Chathy.ai</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }} className='inline'>Chatty.ai</Text>
           <div className="ml-4 inline">
             <Button className="">
               <span role="img" aria-label="apiKey" className="anticon anticon-github h-8 w-6 mb-2">

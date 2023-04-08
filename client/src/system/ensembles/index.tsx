@@ -33,20 +33,20 @@ const { Text } = Typography;
 
 export async function loader(args: LoaderFunctionArgs) {
   const ensembles = await getEnsembles();
-  console.log('all ensembles: ', ensembles);
+  // console.log('all ensembles: ', ensembles);
   if (!ensembles) throw new Response("", { status: 404 });
   return ensembles;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log('request: ', request);
+  // console.log('create request: ', request);
   const formData = await request.formData();
   const ensemble = await createEnsemble({
     id: '',
     title: 'default ensemble title',
     // title: formData.get<("title"),
     isNew: true,
-    steps: [{ id: '', paths: [], inputFrom: '' }]
+    steps: [{ id: '', conditionPaths: [], inputFrom: '', defaultAction: 'continue' }]
     // content: formData.get("content"),
   });
   return redirect(`/system/ensembles/${ensemble.id}`);

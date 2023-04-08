@@ -50,7 +50,7 @@ export default function ModuleEdit() {
   const fin = (values: any) => {
     const formData = new FormData();
 
-    console.log('values: ', values);
+    console.log('module values: ', values);
     Object.keys(values).forEach(key => { formData.append(key, values[key] || '') });
 
     submit(formData, { method: 'post',  action });
@@ -98,8 +98,9 @@ export default function ModuleEdit() {
           {/* <Radio.Group value={'twoWayBind?'}> */}
           <Radio.Group defaultValue='prompt'>
             <Radio.Button value="prompt">Prompt</Radio.Button>
-            <Radio.Button value="search">Search</Radio.Button>
             <Radio.Button value="dialogue">Dialogue</Radio.Button>
+            <Radio.Button value="search">Search</Radio.Button>
+            <Radio.Button value="code">Database</Radio.Button>
             <Radio.Button value="code">Code</Radio.Button>
           </Radio.Group>
         </Form.Item>
