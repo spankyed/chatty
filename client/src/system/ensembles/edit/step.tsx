@@ -4,29 +4,18 @@ import { action } from '..';
 import { EnsemblePageModel, Path, Step } from '../api';
 import { useStepContext } from './ctx';
 
+// const compactLayout = {
+//   labelCol: { span: 10 },
+//   wrapperCol: { span: 16 },
+// };
 
-const layout = {
-  labelCol: { span: 5 },
-  wrapperCol: { span: 16 },
-};
-
-const tailLayout = {
-  wrapperCol: { offset: 3, span: 16 },
-};
-
-const compactLayout = {
-  labelCol: { span: 10 },
-  wrapperCol: { span: 16 },
-};
-
-
-const EditStep = ({ step }: { step: Step}) => {
-  console.log('editting step: ', step);
+const EditStep = () => {
   // if (!step) {
   //   return null;
   // }
-  const { steps, addStep, updateStep, remove } = useStepContext();
-  console.log('addStep: ', addStep);
+  const { steps, selectedStep, addStep, updateStep, remove } = useStepContext();
+  const step = steps.find(s => s.id === selectedStep);
+  console.log('editing step: ', step);
   
   // console.log('val2: ', val);
   
@@ -36,7 +25,7 @@ const EditStep = ({ step }: { step: Step}) => {
   const [conditions, updateConditions] = useState([] as Path[]);
 
   useEffect(() => {
-    if (step.conditionPaths.length > 0) {
+    if (step && step.conditionPaths.length > 0) {
       updateConditions(step.conditionPaths);
     }
   }, []);
@@ -48,29 +37,22 @@ const EditStep = ({ step }: { step: Step}) => {
   ];
 
   const addCondition = () => {
+    if (!step) return;
     let newConditions = [...step.conditionPaths, {id: 'condition', condition: 'Condition 1', goto: 'module'}];
     step.conditionPaths = newConditions;
     updateConditions(step.conditionPaths);
   }
 
   const onConditionsChange = (idx: number, prop: Path['condition'] | Path['goto']) => (value: string) => {
-    console.log('value: ', value);
-    console.log('change')
+    // console.log('value change: ', value);
     // step.conditionPaths[idx][prop] = value;
   }
 
   return (
     <>
-      <Form {...layout} onFinish={(values: any) => {
-        const formData = new FormData();
-        Object.keys(values).forEach(key => { formData.append(key, values[key] || '') });
-        console.log('formData: ', formData);
-        // submit(formData, { method: 'post',  action });
-      }}>
-
         <Form.Item label="Module" name='module'>
           <Select
-            defaultValue={step.module}
+            defaultValue={step?.module}
           >
             {
               mockMods.map((module: any) => <Option key={module.id} value={module.id}>{module.title}</Option>)
@@ -82,7 +64,7 @@ const EditStep = ({ step }: { step: Step}) => {
           <legend style={{ all: 'unset' }}>Inputs From</legend>
           <Form.Item label="Input 1" name='inputs'>
             <Select
-              defaultValue={step.module}
+              defaultValue={step?.module}
             >
               {
                 mockMods.map((module: any) => <Option key={module.id} value={module.id}>{module.title}</Option>)
@@ -110,7 +92,7 @@ const EditStep = ({ step }: { step: Step}) => {
             conditions.map((path, index) => {
               return (
                 <>
-                  <div style={ {"outlineStyle": "dotted" }}  className='m-4 py-2'>
+                  <div style={ {"outlineStyle": "dotted" }}  className='m-4 py-2' key={index}>
                     <Form.Item label="condition" name={`condition${index}`}>
                       <Input 
                       key={index} 
@@ -140,7 +122,7 @@ const EditStep = ({ step }: { step: Step}) => {
 
         <Form.Item label="Default Action" name='defaultAction'>
           <Select
-            defaultValue={step.defaultAction}
+            defaultValue={step?.defaultAction}
           >
             {/* cant hardcode value */}
             <Select.Option value="continue">Continue to Next Step</Select.Option>
@@ -149,9 +131,6 @@ const EditStep = ({ step }: { step: Step}) => {
             <Select.Option value="end">End the Ensemble</Select.Option>
           </Select>
         </Form.Item>
-
-      </Form>
-        
     </>
   );
 };

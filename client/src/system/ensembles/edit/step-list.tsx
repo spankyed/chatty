@@ -3,8 +3,8 @@ import { Card, List, Divider, Button } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useStepContext } from './ctx';
 
-const StepList = ({ selectStep }: any) => {
-  const { steps, addStep, updateStep, remove } = useStepContext();
+const StepList = ({ }: any) => {
+  const { steps, selectedStep, addStep, updateStep, selectStep, remove } = useStepContext();
   console.log('steps list: ', steps);
 
   const addNewStep = () => {
@@ -16,8 +16,12 @@ const StepList = ({ selectStep }: any) => {
   }
 
   const renderStep = (step: any) => {
+    const isSelected = (step: any) => {
+      console.log('selectedStep: ', selectedStep);
+      return step.id === selectedStep;
+    }
     return (
-      <Card key={step.id} onClick={() => selectStep(step)} className=' rounded-none'>
+      <Card key={step.id} onClick={() => selectStep(step)} className={`rounded-none ${(isSelected(step) ? ' border-4 border-red-50' : '')}`}>
         <div className="flex flex-row align-middle">
           <h3 className="mr-2 w-8 bg-gray-500 text-center items-center">{step.id}</h3>
 
