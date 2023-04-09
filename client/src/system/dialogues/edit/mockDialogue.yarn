@@ -1,0 +1,12 @@
+# someFiletag
+title: Start
+---
+  Where are you?
+  -> Home
+      Nice.
+      <<doSomething home>>
+  -> Work
+      Rough.
+      <<doSomething work>>
+  That's it!
+===

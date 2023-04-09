@@ -1,19 +1,23 @@
-// @ts-ignore
-import DialogueTree from 'react-dialogue-tree' // ! no typings
-import 'react-dialogue-tree/dist/react-dialogue-tree.css'
 
 import { Dialogue, DialoguePageModel, loadEditDialogue, updateDialogue } from '../api';
 import { LoaderFunctionArgs, ActionFunctionArgs, redirect, useLoaderData } from 'react-router-dom';
 import { Button, Dropdown, Form, Input, MenuProps, Radio, Select, Slider } from 'antd';
 import { ModulePageModel } from '../../modules/api';
+import { useEffect, useState } from 'react';
+import { DialogueProvider, useDialogueContext } from './ctx';
+import DialogueTreeWrapper from './dialogueTree';
+import InputsWrapper from './inputs';
 
-// yarnspinner mock dialogue
+// must be indented
 const mockDialogue = `
-title: Start
----
-Ship: Hey, friend.
-Player: Hi, Ship.
-===
+Where are you?
+-> Home
+  Nice.
+  <<doSomething home>>
+-> Work
+  Rough.
+  <<doSomething work>>
+That's it!
 `
 
 const layout = {
@@ -21,44 +25,50 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
+const tailLayout = {
+  wrapperCol: { offset: 3, span: 16 },
+};
+
+
+
 function Dialogues({}: any) {
   // console.log('ensemble: ', ensemble);
   // let navigate = useNavigate();
-  const pageModel = useLoaderData() as DialoguePageModel;
-  console.log('dailogue pageModel: ', pageModel);
 
-  const { dialogue } = pageModel;
-
+  // preview open state
+  const [previewOpen, setPreviewOpen] = useState(false);
+  // const { dialogue, updateDialogue } = useDialogueContext();
+  
 
   const fin = (values: any) => {
     console.log('fin')
+    // console.log('dialoguetext: ', dialogue.text);
   }
-  
+
   return (
     <>
-      <Form {...layout} onFinish={fin}>
+      <DialogueProvider>
+        <Form {...layout} onFinish={fin}>
 
-        <Form.Item 
-          label="Title"
-          name="title"
-          rules={[
-            { required: true, message: 'Please input a title' },
-            // {
-            //   pattern: /^[a-zA-Z0-9]+$/,
-            //   message: 'Name can only include letters and numbers.',
-            // },
-          ]}
-          initialValue={dialogue.title}
-        >
-          <Input placeholder="Default dialogue title" name='title' value={dialogue.title}/>
-        </Form.Item>
+          <InputsWrapper/>
 
-        <Form.Item label="Text" name='text' initialValue={dialogue.text}>
-          <Input.TextArea style={{  resize: 'none', height: '7rem' }} value={dialogue.text}/>
-        </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit" className="mr-2 bg-blue-700 hover:bg-blue-100">
+              Done
+            </Button>
+            <Button type="primary" htmlType="button" onClick={() => setPreviewOpen(!previewOpen)} className="mr-2">
+              Preview
+            </Button>
+            <Button disabled={true} type="primary" htmlType="submit" className="mr-2 bg-red-700 hover:bg-red-100 float-right">
+              Delete
+            </Button>
+          </Form.Item>
 
-      </Form>
-      <DialogueTree dialogue={mockDialogue} />
+        </Form>
+        { previewOpen && (
+            <DialogueTreeWrapper/>
+        )}
+      </DialogueProvider>
     </>
   );
 }

@@ -5,7 +5,7 @@ import localforage from "localforage";
 export type Dialogue = {
   id: string;
   title: string;
-  text?: string;
+  text: string;
   isNew?: boolean;
 }
 

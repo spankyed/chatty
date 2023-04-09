@@ -3,8 +3,10 @@ import { createDialogue, getDialogues } from './api';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Space, Table, Tag } from 'antd';
 import { Dialogue } from '../dialogues/api';
+import type { ColumnsType } from 'antd/es/table';
 
-const columns = [
+
+const columns: ColumnsType<Dialogue> = [
   {
     title: 'Title',
     dataIndex: 'title',
@@ -84,7 +86,7 @@ function Dialogues({}: any) {
       </RouterForm>
 
       <div className="w-full flex-grow flex flex-row flex-wrap mb-6 justify-start">
-        <Table dataSource={dialoguesWithKeys} columns={columns} className="w-full"/>
+        <Table<Dialogue>  dataSource={dialoguesWithKeys} columns={columns} className="w-full" pagination={{ hideOnSinglePage: true }}/>
       </div>
 
     </div>
